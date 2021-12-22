@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyROOM</string>
+    <string name="add_student">Add Student</string>
+    <string name="no">No.</string>
+    <string name="roll_no">Roll No</string>
+    <string name="name">Name</string>
+    <string name="enter_surname">Enter Surname</string>
+    <string name="surname">Surname</string>
+    <string name="enter_roll_number">Enter Roll Number</string>
+    <string name="enter_name">Enter Name</string>
+</resources>
