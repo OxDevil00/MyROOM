@@ -4,8 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.constraintlayout.widget.StateSet.TAG
+import com.example.myroom.Daos.FirebaseUserDao
+import com.example.myroom.DataClasses.FirebaseUsers
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -16,6 +19,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 
 class SignInActivity : AppCompatActivity() {
 
@@ -66,19 +71,17 @@ class SignInActivity : AppCompatActivity() {
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
-                    val user = auth.currentUser
-                    updateUI(user)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    updateUI(null)
-                }
+        btnGSignin.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
+        GlobalScope.launch(Dispatchers.IO){
+            val auth =  auth.signInWithCredential(credential).await()
+            val firebaseUser = auth.user
+            withContext(Dispatchers.Main){
+                updateUI(firebaseUser)
             }
+
+
+        }
     }
 
     override fun onStart() {
@@ -91,10 +94,17 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun updateUI(currentUser: FirebaseUser?) {
-        val intent = Intent(this,MainActivity::class.java)
-        Toast.makeText(this,"Sign It Success",Toast.LENGTH_LONG).show()
-        startActivity(intent)
-
+        if (currentUser != null) {
+            val firebaseUserDao = FirebaseUserDao()
+            val user = FirebaseUsers(currentUser.uid,currentUser.displayName.toString(),currentUser.photoUrl.toString())
+            firebaseUserDao.addUser(user)
+            val intent = Intent(this, MainActivity::class.java)
+            Toast.makeText(this, "Sign It Success", Toast.LENGTH_LONG).show()
+            startActivity(intent)
+        }else{
+            progressBar.visibility = View.GONE
+            btnGSignin.visibility = View.VISIBLE
+        }
     }
 
 }

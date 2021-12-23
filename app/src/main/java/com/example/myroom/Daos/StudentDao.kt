@@ -1,7 +1,8 @@
-package com.example.myroom
+package com.example.myroom.Daos
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.example.myroom.Student
 
 @Dao
 interface StudentDao {
