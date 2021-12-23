@@ -93,12 +93,13 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    @DelicateCoroutinesApi
     private fun updateUI(currentUser: FirebaseUser?) {
         if (currentUser != null) {
             val firebaseUserDao = FirebaseUserDao()
             val user = FirebaseUsers(currentUser.uid,currentUser.displayName.toString(),currentUser.photoUrl.toString())
             firebaseUserDao.addUser(user)
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, PostMainActivity::class.java)
             Toast.makeText(this, "Sign It Success", Toast.LENGTH_LONG).show()
             startActivity(intent)
         }else{
