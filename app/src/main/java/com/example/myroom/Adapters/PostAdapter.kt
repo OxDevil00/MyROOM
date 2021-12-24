@@ -12,8 +12,10 @@ import com.example.myroom.R
 import com.example.myroom.Utils.TimeUtil
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
-class PostAdapter(options: FirestoreRecyclerOptions<Post>) : FirestoreRecyclerAdapter<Post,PostAdapter.PostViewHolder>(
+class PostAdapter(options: FirestoreRecyclerOptions<Post>,private val listener : IPostAdapter) : FirestoreRecyclerAdapter<Post,PostAdapter.PostViewHolder>(
     options
 ) {
 
@@ -31,6 +33,20 @@ class PostAdapter(options: FirestoreRecyclerOptions<Post>) : FirestoreRecyclerAd
         holder.likeText.text = model.liked.size.toString()
         Glide.with(holder.userImage.context).load(model.createdBy.imageUrl).circleCrop().into(holder.userImage)
 
+        holder.likeImage.setOnClickListener {
+            listener.onLiked(snapshots.getSnapshot(holder.adapterPosition).id)
+        }
+
+        val auth = Firebase.auth
+        val currentUserId = auth.currentUser!!.uid
+
+        val isLiked = model.liked.contains(currentUserId)
+        if (isLiked){
+            holder.likeImage.setImageResource(R.drawable.ic_baseline_like_24)
+        }else{
+            holder.likeImage.setImageResource(R.drawable.ic_unlike)
+        }
+
     }
 
     class PostViewHolder(view : View) : RecyclerView.ViewHolder(view){
@@ -40,7 +56,11 @@ class PostAdapter(options: FirestoreRecyclerOptions<Post>) : FirestoreRecyclerAd
         val likeText : TextView = view.findViewById(R.id.tvLikeCount)
         val userImage : ImageView = view.findViewById(R.id.imgUser)
         val likeImage : ImageView = view.findViewById(R.id.imgLike)
+
     }
 
+    interface IPostAdapter {
+        fun onLiked(uId : String)
+    }
 
 }

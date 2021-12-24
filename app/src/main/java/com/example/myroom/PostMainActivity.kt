@@ -10,8 +10,9 @@ import com.example.myroom.DataClasses.Post
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_post_main.*
+import kotlinx.android.synthetic.main.firebase_recycler_item.*
 
-class PostMainActivity : AppCompatActivity() {
+class PostMainActivity : AppCompatActivity(), PostAdapter.IPostAdapter {
     lateinit var postAdapter: PostAdapter
     lateinit var postDao: PostDao
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +32,7 @@ class PostMainActivity : AppCompatActivity() {
         val query = postCollection.orderBy("createTime",Query.Direction.DESCENDING)
         val recyclerViewOptions = FirestoreRecyclerOptions.Builder<Post>().setQuery(query,Post::class.java).build()
 
-        postAdapter = PostAdapter(recyclerViewOptions)
+        postAdapter = PostAdapter(recyclerViewOptions,this)
 
         recyclerPostMain.adapter = postAdapter
         recyclerPostMain.layoutManager = LinearLayoutManager(this)
@@ -46,6 +47,10 @@ class PostMainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         postAdapter.stopListening()
+    }
+
+    override fun onLiked(uId: String) {
+        postDao.updateLikes(uId)
     }
 
 }
