@@ -23,6 +23,7 @@ class PostMainActivity : AppCompatActivity(), PostAdapter.IPostAdapter {
 
         val currentUser = Firebase.auth.currentUser
 
+        //checking to current user is created or not
         if (currentUser == null){
             val intent = Intent(this,SignInActivity::class.java)
             startActivity(intent)
