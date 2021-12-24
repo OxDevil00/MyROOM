@@ -1,4 +1,4 @@
-package com.example.myroom
+package com.example.myroom.Adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +7,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myroom.R
+import com.example.myroom.Student
 import kotlinx.android.synthetic.main.student_item.view.*
 
-class StAdapter (private val listener : OnItemClicked): ListAdapter<Student,StAdapter.StViewHolder>(DifUtilCallBack()){
+class StAdapter (private val listener : OnItemClicked): ListAdapter<Student, StAdapter.StViewHolder>(
+    DifUtilCallBack()
+){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StViewHolder {
         return StViewHolder(

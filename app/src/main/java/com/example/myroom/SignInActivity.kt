@@ -77,6 +77,7 @@ class SignInActivity : AppCompatActivity() {
             val auth =  auth.signInWithCredential(credential).await()
             val firebaseUser = auth.user
             withContext(Dispatchers.Main){
+                Toast.makeText(this@SignInActivity, "Sign It Success", Toast.LENGTH_LONG).show()
                 updateUI(firebaseUser)
             }
 
@@ -100,7 +101,6 @@ class SignInActivity : AppCompatActivity() {
             val user = FirebaseUsers(currentUser.uid,currentUser.displayName.toString(),currentUser.photoUrl.toString())
             firebaseUserDao.addUser(user)
             val intent = Intent(this, PostMainActivity::class.java)
-            Toast.makeText(this, "Sign It Success", Toast.LENGTH_LONG).show()
             startActivity(intent)
         }else{
             progressBar.visibility = View.GONE
